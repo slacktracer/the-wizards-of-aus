@@ -11,4 +11,6 @@ module.exports = (routes, db) => {
 
   app.listen(3000);
 
+  return app;
+
 };
