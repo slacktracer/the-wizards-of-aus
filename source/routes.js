@@ -14,9 +14,21 @@ module.exports = app => {
 
   });
 
-  app.get('/stats/:id', function (request, response) {
+  app.get('/stats/:code', async (request, response) => {
 
-    response.json({});
+    const { code } = request.params;
+
+    try {
+
+      const result = await core.url.stats({ code });
+
+      response.json(result);
+
+    } catch (error) {
+
+      response.status(500).json();
+
+    }
 
   });
 

@@ -3,7 +3,7 @@ const CoreError = require('./CoreError');
 const user = db => ({
   async create ({ id }) {
 
-    const result = (await this.data.find({ id })).length === 0;
+    const result = (await this.data.find({ id, deleted: false })).length === 0;
 
     if (result === true) {
 
@@ -20,7 +20,10 @@ const user = db => ({
 
   async delete ({ id }) {
 
-    return await this.data.update({ id }, { $set: { deleted: true } });
+    return await this.data.update(
+      { id, deleted: false },
+      { $set: { deleted: true } }
+    );
 
   },
 

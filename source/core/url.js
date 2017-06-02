@@ -3,7 +3,7 @@ const endec = require('./endec');
 const url = db => ({
   async count () {
 
-    return await this.data.count();
+    return await this.data.count({ deleted: false });
 
   },
   async create ({ url, userId }) {
@@ -35,9 +35,23 @@ const url = db => ({
   async read ({ code }) {
 
     const [ result ] = await Promise.all([
-      this.data.findOne({ code }),
-      this.data.update({ code }, { $inc: { hits: 1 } })
+      this.data.findOne({ code, deleted: false }),
+      this.data.update({ code, deleted: false }, { $inc: { hits: 1 } })
     ]);
+
+    return result;
+
+  },
+
+  async stats ({ code }) {
+
+    const data = await this.data.findOne({ code, deleted: false });
+
+    const result = {
+      code: data.code,
+      hits: data.hits,
+      url: data.url
+    };
 
     return result;
 
