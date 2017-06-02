@@ -6,9 +6,11 @@ const core = require('./core')(
 
 module.exports = app => {
 
-  app.get('/stats', async function (request, response) {
+  app.get('/stats', async (request, response) => {
 
-    response.json({});
+    const result = await core.stats();
+
+    response.json(result);
 
   });
 

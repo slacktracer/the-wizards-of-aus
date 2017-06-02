@@ -1,6 +1,11 @@
 const endec = require('./endec');
 
 const url = db => ({
+  async count () {
+
+    return await this.data.count();
+
+  },
   async create ({ url, userId }) {
 
     const count = await this.data.count();
