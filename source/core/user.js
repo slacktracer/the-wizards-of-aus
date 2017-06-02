@@ -27,7 +27,13 @@ const user = db => ({
 
   },
 
-  data: db.get('users')
+  data: db.get('users'),
+
+  async exists ({ id }) {
+
+    return (await this.data.findOne({ deleted: false, id })) !== null;
+
+  }
 });
 
 module.exports = user;

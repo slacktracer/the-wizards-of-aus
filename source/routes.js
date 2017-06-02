@@ -132,9 +132,19 @@ module.exports = app => {
 
     const { userId } = request.params;
 
-    const result = await core.stats({ userId });
+    const userExists = await core.user.exists({ id: userId });
 
-    response.json(result);
+    if (userExists === true) {
+
+      const result = await core.stats({ userId });
+
+      response.json(result);
+
+    } else {
+
+      response.status(404).json();
+
+    }
 
   });
 
