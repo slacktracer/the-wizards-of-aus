@@ -2,11 +2,19 @@ const url = require('./url');
 const user = require('./user');
 
 const core = db => ({
-  async stats () {
+  async stats ({ userId } = {}) {
+
+    const match = { $match: { deleted: false } };
+
+    if (userId) {
+
+      match.$match.userId = userId;
+
+    }
 
     const data = await Promise.all([
       this.url.data.aggregate([
-        { $match: { deleted: false } },
+        match,
         {
           $group: {
             _id: null,
@@ -16,7 +24,7 @@ const core = db => ({
         }
       ]),
       this.url.data.aggregate([
-        { $match: { deleted: false } },
+        match,
         {
           $group: {
             _id: { code: '$code', url: '$url' },
@@ -28,17 +36,23 @@ const core = db => ({
       ])
     ]);
 
-    const result = {
-      hits: data[0][0].hits,
-      urlCount: data[0][0].count,
-      topUrls: data[1].map(entry => ({
-        code: entry._id.code,
-        url: entry._id.url,
-        hits: entry.hits
-      }))
-    };
+    if (data[0] && data[0][0] && data[1]) {
 
-    return result;
+      const result = {
+        hits: data[0][0].hits,
+        urlCount: data[0][0].count,
+        topUrls: data[1].map(entry => ({
+          code: entry._id.code,
+          url: entry._id.url,
+          hits: entry.hits
+        }))
+      };
+
+      return result;
+
+    }
+
+    return {};
 
   },
   url: url(db),

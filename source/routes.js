@@ -128,9 +128,13 @@ module.exports = app => {
 
   });
 
-  app.get('/users/:userId/stats', function (request, response) {
+  app.get('/users/:userId/stats', async (request, response) => {
 
-    response.json({});
+    const { userId } = request.params;
+
+    const result = await core.stats({ userId });
+
+    response.json(result);
 
   });
 
